@@ -35,6 +35,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -44,6 +48,16 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    val fragment_version = "1.7.1"
+    // Kotlin
+    implementation("androidx.fragment:fragment-ktx:$fragment_version")
+
+    //ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
+
+    //Gson
+    implementation("com.google.code.gson:gson:2.11.0")
 
     // Hilt
     val hiltVersion = "2.48.1"

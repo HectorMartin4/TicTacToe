@@ -1,10 +1,13 @@
 package com.rubilax.a3enraya.feature.domain
 
+import com.rubilax.a3enraya.app.Either
+import com.rubilax.a3enraya.app.ErrorApp
+
 interface GameRepository {
 
-    fun savePiecesState()
+    fun getPiecesState(): Either<ErrorApp, List<Piece>>
 
-    fun getPiecesState(): List<Piece>
+    fun getBoard(): Either<ErrorApp, List<BoardSquare>>
 
-    fun clearBoard()
+    fun cleanBoard(): Either<ErrorApp, Boolean>
 }
