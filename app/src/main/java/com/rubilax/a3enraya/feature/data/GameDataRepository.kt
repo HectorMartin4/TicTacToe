@@ -5,32 +5,16 @@ import com.rubilax.a3enraya.app.ErrorApp
 import com.rubilax.a3enraya.app.left
 import com.rubilax.a3enraya.app.right
 import com.rubilax.a3enraya.feature.data.xml.BoardXmlLocalDataSource
-import com.rubilax.a3enraya.feature.data.xml.PieceXmlLocalDataSource
+import com.rubilax.a3enraya.feature.data.xml.TurnXmlLocalDataSource
 import com.rubilax.a3enraya.feature.domain.BoardSquare
 import com.rubilax.a3enraya.feature.domain.GameRepository
-import com.rubilax.a3enraya.feature.domain.Piece
+import com.rubilax.a3enraya.feature.domain.Turn
 import javax.inject.Inject
 
 class GameDataRepository @Inject constructor(
-    private val pieceXmlLocalDataSource: PieceXmlLocalDataSource,
-    private val boardXmlLocalDataSource: BoardXmlLocalDataSource
+    private val boardXmlLocalDataSource: BoardXmlLocalDataSource,
+    private val turnXmlLocalDataSource: TurnXmlLocalDataSource
 ): GameRepository {
-    override fun getPiecesState(): Either<ErrorApp, List<Piece>> {
-        val localPieces = pieceXmlLocalDataSource.getPieces()
-        return if (localPieces.isLeft() || localPieces.get().isEmpty()) {
-            val pieceNull = Piece(0, 0)
-            val piece1 = Piece(1, 1)
-            val piece2 = Piece(2, 2)
-
-            val piecesList = listOf(pieceNull, piece1, piece2)
-
-            pieceXmlLocalDataSource.savePieces(piecesList)
-            piecesList.right()
-
-        } else {
-            localPieces
-        }
-    }
 
     override fun getBoard(): Either<ErrorApp, List<BoardSquare>> {
         val localBoard = boardXmlLocalDataSource.getBoardSquares()
@@ -57,5 +41,28 @@ class GameDataRepository @Inject constructor(
         }
     }
 
+    override fun getTurn(): Either<ErrorApp, Turn> {
+        return try {
+            val localTurn = turnXmlLocalDataSource.getTurn()
+            if (localTurn.isLeft()){
+                val firstTurn = Turn("cross")
+                turnXmlLocalDataSource.saveTurn(firstTurn)
 
+                firstTurn.right()
+            } else {
+                localTurn
+            }
+        } catch (ex:Exception){
+            ErrorApp.DataError.left()
+        }
+    }
+
+    override fun cleanTurn(): Either<ErrorApp, Boolean> {
+        return try {
+            turnXmlLocalDataSource.clearTurn()
+            true.right()
+        } catch (ex:Exception){
+            ErrorApp.DataError.left()
+        }
+    }
 }
