@@ -17,7 +17,7 @@ class BoardXmlLocalDataSource @Inject constructor(@ApplicationContext context: C
     private val serializer = Gson()
 
 
-    private fun saveBoardSquares(boardSquare: BoardSquare): Either<ErrorApp, Boolean> {
+    fun saveBoardSquares(boardSquare: BoardSquare): Either<ErrorApp, Boolean> {
         return try {
             with(sharedPref.edit()) {
                 putString(

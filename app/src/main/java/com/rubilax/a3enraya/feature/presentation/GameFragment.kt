@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rubilax.a3enraya.databinding.FragmentGameBinding
-import com.rubilax.a3enraya.feature.domain.Turn
 import com.rubilax.a3enraya.feature.presentation.adapter.GameAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -55,9 +54,6 @@ class GameFragment : Fragment() {
                         LinearLayoutManager.HORIZONTAL
                     )
                 )
-                gameAdapter.setBoardSquare {
-
-                }
                 adapter = gameAdapter
             }
         }
@@ -65,14 +61,18 @@ class GameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadBoard()
-        viewModel.loadTurn()
+
         setupObservers()
     }
 
     private fun setupObservers() {
         val observer = Observer<GameViewModel.UiState> {
+            viewModel.loadBoard()
+            viewModel.loadTurn()
             gameAdapter.submitList(it.boardSquares)
+            gameAdapter.setBoardSquare { boardSquare ->
+                viewModel.setPiece(boardSquare)
+            }
         }
         viewModel.uiState.observe(viewLifecycleOwner, observer)
     }

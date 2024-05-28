@@ -12,4 +12,6 @@ interface GameRepository {
     fun getTurn(): Either<ErrorApp, Turn>
 
     fun cleanTurn(): Either<ErrorApp, Boolean>
+
+    fun setPiece(boardSquare: BoardSquare): Either<ErrorApp, Boolean>
 }

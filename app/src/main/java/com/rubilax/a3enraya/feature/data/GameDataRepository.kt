@@ -24,6 +24,7 @@ class GameDataRepository @Inject constructor(
                 val boardSquare = BoardSquare(id = i, type = 0)
                 boardSquares.add(boardSquare)
             }
+            boardXmlLocalDataSource.cleanBoard()
             boardXmlLocalDataSource.saveBoard(boardSquares)
             boardSquares.right()
         } else{
@@ -61,7 +62,29 @@ class GameDataRepository @Inject constructor(
         return try {
             turnXmlLocalDataSource.clearTurn()
             true.right()
-        } catch (ex:Exception){
+        } catch (ex: Exception) {
+            ErrorApp.DataError.left()
+        }
+    }
+
+    override fun setPiece(boardSquare: BoardSquare): Either<ErrorApp, Boolean> {
+        val turn = getTurn()
+
+        return try {
+            if (turn.get().player == "cross") {
+                boardSquare.type = 1
+                turn.get().player = "circle"
+
+            } else if (turn.get().player == "circle") {
+                boardSquare.type = 2
+                turn.get().player = "cross"
+            }
+
+            turnXmlLocalDataSource.saveTurn(turn.get())
+            boardXmlLocalDataSource.saveBoardSquares(boardSquare)
+
+            true.right()
+        } catch (ex: Exception) {
             ErrorApp.DataError.left()
         }
     }
